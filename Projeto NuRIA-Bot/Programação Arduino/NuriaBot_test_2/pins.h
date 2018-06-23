@@ -36,13 +36,15 @@
 //
 // LED - Calibration Lights
 //
-#define LED_CALIBRATION_LIGHTS_PIN        4  // Leds para calibração linhas
+//#define LED_CALIBRATION_LIGHTS_PIN        4  // Leds para calibração linhas
 
 //
 // LED - Indicação luminosa
 //
-#define LED_PIN       10 // Led para indicações luminosas
-
+//#define LED_PIN       10 // Led para indicações luminosas
+#define LED_VERDE       10
+#define LED_VERMELHO    2
+#define LED_AZUL        4
 //
 // Buzzer
 //

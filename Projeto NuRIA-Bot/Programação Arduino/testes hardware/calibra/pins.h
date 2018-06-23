@@ -17,12 +17,12 @@
 // https://docs.google.com/drawings/d/1-qWhn8gEQo6laPO37YPNl5I7lbErecEisJWaW6vdXDo/edit?usp=sharing
 
 //M2 no shield
-//#define MOTOR_DIR_VEL          6 // Lado direito - velocidade - números pinos PARES
-//#define MOTOR_DIR_DIR          8 // lado direito direito direcao
+#define MOTOR_DIR_VEL          6 // Lado direito - velocidade - números pinos PARES
+#define MOTOR_DIR_DIR          8 // lado direito direito direcao
 
 //M1 no shield
-//#define MOTOR_ESQ_VEL          5 // Lado esquerdo - velocidade - números pinos ÍMPARES
-//#define MOTOR_ESQ_DIR          7 // lado direito direito direcao
+#define MOTOR_ESQ_VEL          5 // Lado esquerdo - velocidade - números pinos ÍMPARES
+#define MOTOR_ESQ_DIR          7 // lado direito direito direcao
 
 //
 // Motor - Garra - Pino PWM
@@ -53,7 +53,7 @@
 //
 
 //Sensores de reflexão - modo analogico
-#define SENSOR_BAR_LINE_DIR       A0
+#define SENSOR_BAR_LINE_DIR       A4
 #define SENSOR_BAR_LINE_ESQ       A5
 
 //Sensor ultrasônico

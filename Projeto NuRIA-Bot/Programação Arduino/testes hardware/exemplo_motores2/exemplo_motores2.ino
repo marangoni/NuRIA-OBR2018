@@ -15,11 +15,22 @@
 
 */
 
-const int motorA = 5;
-const int dirA = 7;
+//#define MOTOR_DIR_VEL          6 // Lado direito - velocidade - números pinos PARES
+//#define MOTOR_ESQ_VEL          5 // Lado esquerdo - velocidade - números pinos ÍMPARES
 
-const int motorB = 6;
-const int dirB = 8;
+//#define MOTOR_ESQ_DIR          7 // lado direito direito direcao
+//#define MOTOR_DIR_DIR          8 // lado direito direito direcao
+
+//M1 no shield
+
+
+
+const int MOTOR_ESQ_VEL = 5; //motor A
+const int MOTOR_ESQ_DIR = 7; //dirA
+
+
+const int MOTOR_DIR_VEL = 6; //motor B
+const int MOTOR_DIR_DIR = 8;           //dir B
 
 byte b;
 
@@ -29,10 +40,10 @@ void setup(){
   Serial.begin(9600);
   Serial.println("Start");
 
-  pinMode(motorA, OUTPUT);
-  pinMode(motorB, OUTPUT);
-  pinMode(dirA, OUTPUT);
-  pinMode(dirB, OUTPUT);
+  pinMode(MOTOR_ESQ_VEL, OUTPUT);
+  pinMode(MOTOR_ESQ_DIR, OUTPUT);
+  pinMode(MOTOR_ESQ_DIR, OUTPUT);
+  pinMode(MOTOR_DIR_DIR, OUTPUT);
 }
 
 // ------------------------------------------------
@@ -46,8 +57,8 @@ void loop(){
       // PWM Up
       case 'u':
         for(int i=0 ; i <= 255 ; i++){
-          analogWrite(motorA, i);
-          analogWrite(motorB, i);
+          analogWrite(MOTOR_ESQ_VEL, i);
+          analogWrite(MOTOR_ESQ_VEL, i);
           delay(20);
         }
         Serial.println("\tok");
@@ -56,8 +67,8 @@ void loop(){
       // PWM Down
       case 'd':
         for(int i=255 ; i >= 0 ; i--){
-          analogWrite(motorA, i);
-          analogWrite(motorB, i);
+          analogWrite(MOTOR_ESQ_VEL, i);
+          analogWrite(MOTOR_ESQ_VEL, i);
           delay(20);
         }
         Serial.println("\tok");
@@ -66,45 +77,45 @@ void loop(){
 
       // On
       case 'o':
-        digitalWrite(motorA, HIGH);
-        digitalWrite(motorB, HIGH);
+        digitalWrite(MOTOR_ESQ_DIR, HIGH);
+        digitalWrite(MOTOR_ESQ_DIR, HIGH);
         Serial.println("ON");
         break;
 
       // Off
       case 'f':
-        digitalWrite(motorA, LOW);
-        digitalWrite(motorB, LOW);
+        digitalWrite(MOTOR_ESQ_DIR, LOW);
+        digitalWrite(MOTOR_ESQ_DIR, LOW);
         Serial.println("OFF");
         break;
 
 
       // Dir-1
       case '1':
-        digitalWrite(dirA, HIGH);
-        digitalWrite(dirB, HIGH);
+        digitalWrite(MOTOR_ESQ_DIR, HIGH);
+        digitalWrite(MOTOR_DIR_DIR, HIGH);
         Serial.println("\tdir-1");
         break;
 
       // Dir-2
       case '2':
-        digitalWrite(dirA, LOW);
-        digitalWrite(dirB, LOW);
+        digitalWrite(MOTOR_ESQ_DIR, LOW);
+        digitalWrite(MOTOR_DIR_DIR, LOW);
         Serial.println("\tdir-2");
         break;
 
 
       // PWM Max
       case '>':
-          analogWrite(motorA, 240);
-          analogWrite(motorB, 240);
+          analogWrite(MOTOR_ESQ_VEL, 240);
+          analogWrite(MOTOR_ESQ_VEL, 240);
         Serial.println("\tMax");
         break;
 
       // PWM Min
       case '<':
-          analogWrite(motorA, 20);
-          analogWrite(motorB, 20);
+          analogWrite(MOTOR_ESQ_VEL, 20);
+          analogWrite(MOTOR_ESQ_VEL, 20);
         Serial.println("\tMin");
         break;
 

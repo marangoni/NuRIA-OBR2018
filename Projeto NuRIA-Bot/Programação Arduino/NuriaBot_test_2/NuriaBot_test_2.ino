@@ -28,20 +28,30 @@ const int MOTOR_DIR_DIR = 8;
 
 
  //variaveis para armazenamento leitura sensores
+
  int sensor_DIR = 0;
  int sensor_ESQ = 0;
  int tempo_entre_leituras = 10;
 
-int branco_esq = 32;
-int branco_dir = 31;
+int branco_esq = 25;
+int branco_dir = 25;
 
-int preto_esq = 702;
-int preto_dir = 690;
+int preto_esq = 500;
+int preto_dir = 500;
 
-int velocidade = 120;
+int verde_esq = 38;
+int verde_dir = 38;
+
+int velocidade = 110;
 
 void setup() {
+  
   // put your setup code here, to run once:
+  Serial.begin(9600);
+
+  pinMode(LED_VERDE, OUTPUT);
+  pinMode(LED_VERMELHO, OUTPUT);
+  pinMode(LED_AZUL, OUTPUT); 
   pinMode(MOTOR_DIR_VEL, OUTPUT);
   pinMode(MOTOR_ESQ_VEL, OUTPUT);
   pinMode(MOTOR_DIR_DIR, OUTPUT);
@@ -49,8 +59,8 @@ void setup() {
 
   pinMode(MOTOR_DC_GARRA_PIN, OUTPUT);
   pinMode(SERVO_RADAR_FRENTE_PIN, OUTPUT);
-  pinMode(LED_CALIBRATION_LIGHTS_PIN, OUTPUT);
-  pinMode(LED_PIN, OUTPUT);
+//  pinMode(LED_CALIBRATION_LIGHTS_PIN, OUTPUT);
+//  pinMode(LED_PIN, OUTPUT);
   pinMode(BUZZER_PIN, OUTPUT);
 
   pinMode(SENSOR_BAR_LINE_DIR, INPUT);
@@ -87,8 +97,8 @@ void siga (int dir, int vel) {
 
  digitalWrite(MOTOR_DIR_DIR, dir);
  digitalWrite(MOTOR_ESQ_DIR, dir);
- digitalWrite(MOTOR_DIR_VEL, vel);
- digitalWrite(MOTOR_ESQ_DIR, vel);
+ analogWrite(MOTOR_DIR_VEL,vel*1.20);
+ analogWrite(MOTOR_ESQ_VEL,vel*0.40);
 
  //analogWrite (IN4, (vel - 20)); // a vel do IN4 precisa ser +20 em relação ao motor esquerdo, do contrario, ele andará torto.
 }
@@ -109,8 +119,8 @@ void curva_direita (int dir, int vel, int ang) {
 digitalWrite(MOTOR_DIR_DIR, dir);
 digitalWrite(MOTOR_ESQ_DIR, dir);
 // para virar para direita velocidade Direita > velocidade Esquerda
-analogWrite(MOTOR_DIR_VEL, vel + ang);
-analogWrite(MOTOR_ESQ_VEL, vel - ang);
+analogWrite(MOTOR_DIR_VEL, (vel + ang)*1.20);
+analogWrite(MOTOR_ESQ_VEL, (vel - ang)*0.40);
 }
 
 void curva_esquerda (int dir, int vel, int ang) {
@@ -122,10 +132,20 @@ void curva_esquerda (int dir, int vel, int ang) {
 digitalWrite(MOTOR_DIR_DIR, dir);
 digitalWrite(MOTOR_ESQ_DIR, dir);
 // para virar para direita velocidade Esquerda > velocidade Direita
-analogWrite(MOTOR_DIR_VEL, vel - ang);
-analogWrite(MOTOR_ESQ_VEL, vel + ang);
+analogWrite(MOTOR_DIR_VEL, (vel - ang)*1.20);
+analogWrite(MOTOR_ESQ_VEL, (vel + ang)*0.40);
 
 }
+
+void pare() {
+  // função para que o N3 ande faça curva
+  
+// para virar para direita velocidade Esquerda > velocidade Direita
+analogWrite(MOTOR_DIR_VEL, 0);
+analogWrite(MOTOR_ESQ_VEL, 0);
+
+}
+
 
 // Programa principal
 
@@ -133,42 +153,63 @@ analogWrite(MOTOR_ESQ_VEL, vel + ang);
 void loop() {
   // put your main code here, to run repeatedly:
 
+  digitalWrite(LED_VERDE,LOW);
+  digitalWrite(LED_AZUL,LOW);
+  digitalWrite(LED_VERMELHO,LOW);
+
   // lê o valor de entrada que o sensor esquerdo está mandando e o nomeia como sensor_ESQ,
   int sensor_ESQ = analogRead (SENSOR_BAR_LINE_ESQ); 
   
   // lê o valor de entrada que o sensor direito está mandando e o nomeia como sensor_DIR.
   int sensor_DIR = analogRead (SENSOR_BAR_LINE_DIR); 
 
+// REFERENCIA COMEÇA NA DIREITA
 
- if ( (sensor_DIR > preto_dir) && (sensor_ESQ > preto_esq) ) {
+//  Serial.print("Direito: ");
+//  Serial.println(sensor_DIR);
+//
+//  Serial.print("Esquerdo: ");
+//  Serial.println(sensor_ESQ);
+//  delay(500);
+
+ if ( (sensor_DIR > branco_dir) && (sensor_ESQ > preto_esq) ) {
    // caso em que os dois sensores estejam na parte preta, ou seja,o N3 está em uma parte reta.
    siga(HIGH, velocidade); // anda para frente
+   digitalWrite(LED_VERDE,HIGH);
+   digitalWrite(LED_VERMELHO,LOW);
+   digitalWrite(LED_AZUL,LOW);
  }
- else if ( (sensor_DIR > preto_dir) && (sensor_ESQ < branco_esq)) {
-   // caso em que o sensor esquerdo está na parte branca e o sensor direito está na parte preta, ou seja,
-   // o N2 está em uma curva para a direita.
+ else if ( (sensor_DIR < branco_dir) && (sensor_ESQ < branco_esq)) {
+ // caso em que o sensor esquerdo está na parte branca e o sensor direito está na parte preta, ou seja,
+ // o N2 está em uma curva para a direita.
 
-  // curva (2, 3, 4, 5, HIGH, 240, 180); // curva para a direita
+//  // curva (2, 3, 4, 5, HIGH, 240, 180); // curva para a direita
+    curva_esquerda(HIGH,velocidade*1.10,30);
+    digitalWrite(LED_AZUL,HIGH);
+    digitalWrite(LED_VERDE,LOW);
+    digitalWrite(LED_VERMELHO,LOW);
+  }
+ else if( (sensor_ESQ > preto_esq) && (sensor_DIR > preto_dir) ) {
+//  // caso em que o sensor esquerdo está na parte preta e o sensor direito está na parte branca, logo,
+//  // o N2 está em uma curva para a esquerda.
+//  //curva (2, 3, 4, 5, HIGH,180 , 240); // curva para a esquerda
+//
     curva_direita(HIGH,velocidade,15);
+    digitalWrite(LED_VERMELHO,HIGH);
+    digitalWrite(LED_VERDE,LOW);
+    digitalWrite(LED_AZUL,LOW);
+//
   }
-  else if( (sensor_ESQ > preto_esq) && (sensor_DIR < branco_dir) ) {
-  // caso em que o sensor esquerdo está na parte preta e o sensor direito está na parte branca, logo,
-  // o N2 está em uma curva para a esquerda.
-  //curva (2, 3, 4, 5, HIGH,180 , 240); // curva para a esquerda
-
-    curva_esquerda(HIGH,velocidade,15);
-
-  }
-  else if ( (sensor_DIR < branco_dir) && (sensor_ESQ < branco_esq) ) {
-    // os dois sensores estao na parte branca. Esse caso é usado principalmente para as curvas
-    // de 90º ou para corrigir a direção do N2.
-    // vai para trás. Esse caso torna o N2 mais lento, mais aumenta a precisão
-    // e possibilita a curva de 90º.
-    //tras ( 2, 3, 4, 5, LOW, 40);
-
-    //siga(HIGH,velocidade-50);
-     curva_esquerda(LOW,velocidade*0.30,5);
-
-  }
+//  else if ( (sensor_DIR < branco_dir) && (sensor_ESQ < branco_esq) ) {
+//    // os dois sensores estao na parte branca. Esse caso é usado principalmente para as curvas
+//    // de 90º ou para corrigir a direção do N2.
+//    // vai para trás. Esse caso torna o N2 mais lento, mais aumenta a precisão
+//    // e possibilita a curva de 90º.
+//    //tras ( 2, 3, 4, 5, LOW, 40);
+//
+//    //siga(HIGH,velocidade-50);
+//     curva_esquerda(LOW,velocidade*0.30,5);
+//
+//  }
 
 }
